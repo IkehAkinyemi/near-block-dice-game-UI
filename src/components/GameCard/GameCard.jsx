@@ -1,8 +1,16 @@
+import Big from "big.js";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "../Button/Button";
 import Icon from "../Icon/Icon";
 import Timer from "../Timer/Timer";
+
+const txFee = Big(0.5)
+  .times(10 ** 24)
+  .toFixed();
+const GAS = Big(3)
+  .times(10 ** 13)
+  .toFixed();
 
 const GameCard = ({
 	creator,
@@ -41,7 +49,7 @@ const GameCard = ({
 
       playersDetails.forEach((el) => {
 
-        if (el.playerId === currentUser.accountId) {
+        if (el.playerId === currentUser?.accountId) {
           if (el.timeRolled !== "0") {
             setRolled("Rolled");
           } else {
@@ -58,7 +66,7 @@ const GameCard = ({
     };
 
     getGameDetails();
-  }, [contract, id, currentUser.accountId, endTime, counter]);
+  }, [contract, id, currentUser?.accountId, endTime, counter]);
 
   useEffect(() => {
     const getCreatedAt = async () => {
@@ -92,12 +100,12 @@ const GameCard = ({
     const playersDetails = await contract.getPlayersDetails({ gameId: id });
     try {
       playersDetails.forEach(async (el) => {
-        if (el.playerId === currentUser.accountId) {
+        if (el.playerId === currentUser?.accountId) {
           await contract.rollDice({ gameId: id });
           setRolled("Rolled");
           countDown();
         } else {
-          await contract.joinGame({ gameId: id });
+          await contract.joinGame({ gameId: id }, GAS, txFee);
           setRolled("Roll");
           countDown();
         }
@@ -140,7 +148,7 @@ const GameCard = ({
     <Wrapper className="flex items-end justify-between px-8 py-6">
       <div>
         <h3 className="text-lg font-medium">Creator: {creator}</h3>
-        <h3 className="text-lg font-medium my-3">Created At: {startDate}</h3>
+        <h3 className="text-lg font-medium my-3">Started At: {startDate}</h3>
         <h3 className="text-lg font-medium">Ends At: {endDate}</h3>
         <h3 className="text-lg font-medium mt-3 mb-6">Players: {players}</h3>
         {renderedButton()}

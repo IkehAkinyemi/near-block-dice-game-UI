@@ -25,7 +25,7 @@ const ActiveGames = ({ contract, currentUser }) => {
       <header>Active Games</header>
       <main className="my-20 mx-auto grid grid-cols-2 gap-10">
         {createdGames?.map((el) => {
-          if(el.status === 0) {
+          if(el.status === 1) {
             return (
               <GameCard
                 key={el.id}
