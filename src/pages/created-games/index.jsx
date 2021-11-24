@@ -3,12 +3,12 @@ import styled from "styled-components";
 import GameCard from "../../components/GameCard/GameCard";
 import Navigator from "../../components/Navigator/Navigator";
 
-const ActiveGames = ({ contract, currentUser }) => {
-	const [createdGames, setActiveGames] = useState(null);
+const CreatedGames = ({ contract, currentUser }) => {
+	const [createdGames, setCreatedGames] = useState(null);
 
-  async function getActiveGames() {
+  async function getCreatedGames() {
     try {
-      const pages = await contract?.getActiveGames({ page: 0 });
+      const pages = await contract?.getCreatedGames({ page: 0 });
       return pages;
     } catch (error) {
       return error.message;
@@ -16,13 +16,13 @@ const ActiveGames = ({ contract, currentUser }) => {
   }
 
   useEffect(() => {
-    getActiveGames().then((res) => setActiveGames(res?.data));
+    getCreatedGames().then((res) => setCreatedGames(res?.data));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Wrapper>
-      <header>Active Games</header>
+      <header>Created Games</header>
       <main className="my-20 mx-auto grid grid-cols-2 gap-10">
         {createdGames?.map((el) => {
           if(el.status === 0) {
@@ -78,4 +78,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default ActiveGames;
+export default CreatedGames;

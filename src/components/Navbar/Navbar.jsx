@@ -34,6 +34,13 @@ const Navbar = ({ currentUser, nearConfig, wallet }) => {
           <NavLink
             activeClassName="active-link"
             className="mx-8"
+            to="/created-games"
+          >
+            Created Games
+          </NavLink>
+          <NavLink
+            activeClassName="active-link"
+            className="mx-8"
             to="/active-games"
           >
             Active Games

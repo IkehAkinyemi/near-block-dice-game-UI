@@ -6,6 +6,7 @@ import ActiveGames from "./pages/active-games";
 import CompletedGames from "./pages/completed-games";
 import Profile from "./pages/profile";
 import Game from "./pages/game";
+import CreatedGames from "./pages/created-games";
 
 const App = ({ contract, currentUser, nearConfig, wallet }) => {
 	return (
@@ -13,6 +14,7 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
       <Navbar currentUser={currentUser} nearConfig={nearConfig} wallet={wallet}/>
       <Switch>
         <Route exact path="/" render={(props) => <Home {...props} contract={contract} currentUser={currentUser} />} />
+				<Route exact path="/created-games" render={(props) => <CreatedGames {...props} contract={contract} currentUser={currentUser} />}/>
         <Route exact path="/active-games" render={(props) => <ActiveGames {...props} contract={contract} currentUser={currentUser} />}/>
         <Route exact path="/completed-games" render={(props) => <CompletedGames {...props} contract={contract} currentUser={currentUser} nearConfig={nearConfig} wallet={wallet} />} />
         <Route exact path="/profile" component={Profile} />
