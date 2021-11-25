@@ -32,22 +32,8 @@ const GameCard = ({
   const [endTime, setEndTIme] = useState(0);
 
   useEffect(() => {
-    const countDown = () => {
-      const timer = setInterval(() => {
-        if (Date.now() / 1000 >= endTime || counter === "00.00") {
-          setCounter("00:00");
-        } else if (Date.now() / 1000 !== endTime) {
-          const currentTime = endTime - Date.now() / 1000;
-          setCounter(currentTime / 60 - 0.01);
-        }
-      }, 1000);
-
-      return clearInterval(timer);
-    };
-
     const getGameDetails = async () => {
       const playersDetails = await contract.getPlayersDetails({ gameId: id });
-      const gameDetails = await contract.getGameDetails({ gameId: id });
 
       playersDetails.forEach((el) => {
         if (el.playerId === currentUser?.accountId) {
@@ -60,14 +46,10 @@ const GameCard = ({
           setRolled("Join Game");
         }
       });
-
-      if (gameDetails !== "0") {
-        countDown();
-      }
     };
 
     getGameDetails();
-  }, [contract, id, currentUser?.accountId, endTime, counter]);
+  }, [contract, id, currentUser?.accountId]);
 
   useEffect(() => {
     if (status === 1) {
@@ -76,21 +58,21 @@ const GameCard = ({
       setEndTIme(startTime + 1800);
     }
 
-		const timer = setInterval(() => {
-			if (Date.now() / 1000 >= endTime || counter === "00.00") {
-				setCounter("00:00");
-			} else if (Date.now() / 1000 !== endTime) {
-				const currentTime = endTime - Date.now() / 1000;
-				setCounter(currentTime / 60 - 0.01);
-			}
-		}, 1000);
-
-		return clearInterval(timer);
+    setInterval(() => {
+      if (Date.now() / 1000 >= endTime || counter === "00.00") {
+        setCounter("00:00");
+      } else if (Date.now() / 1000 !== endTime) {
+        const currentTime = endTime - Date.now() / 1000;
+				console.log(currentTime)
+        setCounter(currentTime && currentTime / 60 - 0.01);
+      }
+    }, 1000);
   }, [status, createdAt, startTime, counter, endTime]);
 
   const handleClick = async () => {
+		setRolled("Loading...")
     const countDown = () => {
-      const timer = setInterval(() => {
+       setInterval(() => {
         if (Date.now() / 1000 >= endTime || counter === "00.00") {
           setCounter("00:00");
         } else if (Date.now() / 1000 !== endTime) {
@@ -98,8 +80,6 @@ const GameCard = ({
           setCounter(currentTime / 60 - 0.01);
         }
       }, 1000);
-
-      return clearInterval(timer);
     };
 
     const playersDetails = await contract.getPlayersDetails({ gameId: id });

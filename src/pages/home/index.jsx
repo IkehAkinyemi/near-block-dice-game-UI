@@ -20,6 +20,7 @@ const GAS = Big(3)
 
 const Home = ({ contract, currentUser }) => {
   const [gameId, setGameId] = useState("");
+	const [homeBtn, setHomeBtn] = useState("Create A Game")
   console.log(currentUser);
 
   const gameList = useSelector(selectGameListState);
@@ -46,13 +47,15 @@ const Home = ({ contract, currentUser }) => {
             style={{ height: 55 }}
             className="my-8"
             onClick={() => {
+							setHomeBtn("Loading...");
+
               createNewGame().then((val) => {
-                console.log(val);
                 dispatch(addToGameList(val));
+								setHomeBtn("Create A Game")
               });
             }}
           >
-            Create A Game
+            {homeBtn}
           </Button>
           <Link to="/">How it works ?</Link>
         </article>

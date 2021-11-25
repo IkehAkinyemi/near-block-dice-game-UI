@@ -31,8 +31,8 @@ const ActiveGames = ({ contract, currentUser }) => {
                 key={el.id}
                 id={el.id}
                 creator={el.createdBy}
-                startDate={`${new Date(el.createdAt / 1000000)}`.substring(0, 24)}
-                endDate={`${new Date((el.createdAt / 1000000) + (1800000))}`.substring(0, 24)}
+                startDate={`${new Date(el.started / 1000000)}`.substring(0, 24)}
+                endDate={`${new Date((el.started / 1000000) + (1800000))}`.substring(0, 24)}
                 players={el.players}
                 contract={contract}
                 currentUser={currentUser}
