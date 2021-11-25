@@ -36,6 +36,9 @@ const ActiveGames = ({ contract, currentUser }) => {
                 players={el.players}
                 contract={contract}
                 currentUser={currentUser}
+								status={el.status}
+								createdAt = {el.createdAt}
+
               />
             )
           }

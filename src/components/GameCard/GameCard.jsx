@@ -13,7 +13,7 @@ const GAS = Big(3)
   .toFixed();
 
 const GameCard = ({
-	creator,
+  creator,
   startDate,
   endDate,
   players,
@@ -23,6 +23,8 @@ const GameCard = ({
   contract,
   currentUser,
   id,
+  createdAt,
+  status,
 }) => {
   const [rolled, setRolled] = useState("Join Game");
   const [counter, setCounter] = useState(30.0);
@@ -30,25 +32,24 @@ const GameCard = ({
   const [endTime, setEndTIme] = useState(0);
 
   useEffect(() => {
-		const countDown = () => {
-			const timer = setInterval(() => {
-				if (Date.now() / 1000 >= endTime || counter === "00.00") {
-					setCounter("00:00");
-				} else if (Date.now() / 1000 !== endTime) {
-					const currentTime = endTime - Date.now() / 1000;
-					setCounter(currentTime / 60 - 0.01);
-				}
-			}, 1000);
-	
-			return clearInterval(timer);
-		}
+    const countDown = () => {
+      const timer = setInterval(() => {
+        if (Date.now() / 1000 >= endTime || counter === "00.00") {
+          setCounter("00:00");
+        } else if (Date.now() / 1000 !== endTime) {
+          const currentTime = endTime - Date.now() / 1000;
+          setCounter(currentTime / 60 - 0.01);
+        }
+      }, 1000);
+
+      return clearInterval(timer);
+    };
 
     const getGameDetails = async () => {
       const playersDetails = await contract.getPlayersDetails({ gameId: id });
       const gameDetails = await contract.getGameDetails({ gameId: id });
 
       playersDetails.forEach((el) => {
-
         if (el.playerId === currentUser?.accountId) {
           if (el.timeRolled !== "0") {
             setRolled("Rolled");
@@ -69,33 +70,37 @@ const GameCard = ({
   }, [contract, id, currentUser?.accountId, endTime, counter]);
 
   useEffect(() => {
-    const getCreatedAt = async () => {
-      const pages = await contract?.getCreatedGames({ page: 0 });
-      // console.log(pages);
-      pages?.data?.forEach((el) => {
-        if (el.id === id) {
-          let time = new Date(el.createdAt / 1000000);
-          setStartTime(time.getTime() / 1000);
-          setEndTIme(startTime + 1800);
-        }
-      });
-    };
-    getCreatedAt();
-  }, [contract, id, startTime]);
+    if (status === 1) {
+      let time = new Date(createdAt / 1000000);
+      setStartTime(time.getTime() / 1000);
+      setEndTIme(startTime + 1800);
+    }
+
+		const timer = setInterval(() => {
+			if (Date.now() / 1000 >= endTime || counter === "00.00") {
+				setCounter("00:00");
+			} else if (Date.now() / 1000 !== endTime) {
+				const currentTime = endTime - Date.now() / 1000;
+				setCounter(currentTime / 60 - 0.01);
+			}
+		}, 1000);
+
+		return clearInterval(timer);
+  }, [status, createdAt, startTime, counter, endTime]);
 
   const handleClick = async () => {
-		const countDown = () => {
-			const timer = setInterval(() => {
-				if (Date.now() / 1000 >= endTime || counter === "00.00") {
-					setCounter("00:00");
-				} else if (Date.now() / 1000 !== endTime) {
-					const currentTime = endTime - Date.now() / 1000;
-					setCounter(currentTime / 60 - 0.01);
-				}
-			}, 1000);
-	
-			return clearInterval(timer);
-		}
+    const countDown = () => {
+      const timer = setInterval(() => {
+        if (Date.now() / 1000 >= endTime || counter === "00.00") {
+          setCounter("00:00");
+        } else if (Date.now() / 1000 !== endTime) {
+          const currentTime = endTime - Date.now() / 1000;
+          setCounter(currentTime / 60 - 0.01);
+        }
+      }, 1000);
+
+      return clearInterval(timer);
+    };
 
     const playersDetails = await contract.getPlayersDetails({ gameId: id });
     try {
