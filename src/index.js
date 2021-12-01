@@ -44,11 +44,11 @@ async function initContract() {
         "getPlayersDetails",
         "getProfileDetails",
         "getActiveGames",
-        "getCompletedGames",
         "getCreatedGames",
       ],
       // Change methods can modify the state, but you don't receive the returned value when called
-      changeMethods: ["createNewGame", "joinGame", "rollDice", "claimWinnings"],
+      changeMethods: ["createNewGame", "joinGame", "rollDice", "claimWinnings",         "getCompletedGames",
+    ],
       // Sender is the account ID to initialize transactions.
       // getAccountId() will return empty string if user is still unauthorized
       sender: walletConnection.getAccountId(),

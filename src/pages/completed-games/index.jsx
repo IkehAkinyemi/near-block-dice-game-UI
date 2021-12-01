@@ -18,7 +18,8 @@ const CompletedGames = ({ contract, currentUser }) => {
     };
 
     getCompletedGames().then((res) => setCompletedGames(res?.data));
-  }, [contract]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Wrapper>
