@@ -4,9 +4,6 @@ import App from "./App";
 import getConfig from "./config.js";
 import * as nearAPI from "near-api-js";
 import "./index.css";
-import { Provider } from "react-redux";
-import store, { persistor } from "./store";
-import { PersistGate } from "reduxjs-toolkit-persist/integration/react";
 
 // Initializing contract
 async function initContract() {
@@ -47,8 +44,13 @@ async function initContract() {
         "getCreatedGames",
       ],
       // Change methods can modify the state, but you don't receive the returned value when called
-      changeMethods: ["createNewGame", "joinGame", "rollDice", "claimWinnings",         "getCompletedGames",
-    ],
+      changeMethods: [
+        "createNewGame",
+        "joinGame",
+        "rollDice",
+        "claimWinnings",
+        "getCompletedGames",
+      ],
       // Sender is the account ID to initialize transactions.
       // getAccountId() will return empty string if user is still unauthorized
       sender: walletConnection.getAccountId(),
@@ -61,18 +63,14 @@ async function initContract() {
 window.nearInitPromise = initContract().then(
   ({ contract, currentUser, nearConfig, walletConnection }) => {
     ReactDOM.render(
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <React.StrictMode>
-            <App
-              contract={contract}
-              currentUser={currentUser}
-              nearConfig={nearConfig}
-              wallet={walletConnection}
-            />
-          </React.StrictMode>
-        </PersistGate>
-      </Provider>,
+      <React.StrictMode>
+        <App
+          contract={contract}
+          currentUser={currentUser}
+          nearConfig={nearConfig}
+          wallet={walletConnection}
+        />
+      </React.StrictMode>,
       document.getElementById("root")
     );
   }

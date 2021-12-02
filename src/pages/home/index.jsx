@@ -4,11 +4,6 @@ import styled from "styled-components";
 import Button from "../../components/Button/Button";
 import Icon from "../../components/Icon/Icon";
 import Input from "../../components/Input/Input";
-import { useDispatch, useSelector } from "react-redux";
-import {
-	addToGameList,
-  selectGameListState,
-} from "../../store/slices/gameList.slice";
 import Big from "big.js";
 
 const txFee = Big(0.5)
@@ -22,11 +17,6 @@ const Home = ({ contract, currentUser }) => {
   const [gameId, setGameId] = useState("");
 	const [homeBtn, setHomeBtn] = useState("Create A Game")
   console.log(currentUser);
-
-  const gameList = useSelector(selectGameListState);
-  const dispatch = useDispatch();
-
-  console.log(gameList);
 
   const createNewGame = async () => {
     try {
@@ -50,7 +40,6 @@ const Home = ({ contract, currentUser }) => {
 							setHomeBtn("Loading...");
 
               createNewGame().then((val) => {
-                dispatch(addToGameList(val));
 								setHomeBtn("Create A Game")
               });
             }}

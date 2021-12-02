@@ -1,44 +1,55 @@
+import { useEffect } from "react";
+import { useState } from "react/cjs/react.development";
 import styled from "styled-components";
 import GameCard from "../../components/GameCard/GameCard";
 import Navigator from "../../components/Navigator/Navigator";
 
-const Profile = () => {
+const Profile = ({contract, currentUser}) => {
+
+	const [games, setGames] = useState([]);
+
+	useEffect(() => {
+		const getProfile = async () => {
+			const profile = await contract?.getProfileDetails({account: currentUser?.accountId});
+
+			profile.forEach( async (el) => {
+				const data = await contract?.getGameDetails({gameId: el});
+				setGames(prev => [data[0], ...prev]);
+			});
+		}
+
+		getProfile();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []) 
+
+	console.log(games);
+
 	return (
 		<Wrapper>
 			<header>Profile</header>
 			<main className="my-20 mx-auto grid grid-cols-2 gap-10">
-				<GameCard
-					variant="completed"
-					creator="melvinmanni.testnet"
-					startDate="2/10/21 16:00"
-					endDate="2/10/21 16:30"
-					players={32}
-					result="won"
-					amount={1.6}
-				/>
-				<GameCard
-					variant="completed"
-					creator="melvinmanni.testnet"
-					startDate="2/10/21 16:00"
-					endDate="2/10/21 16:30"
-					players={32}
-					result="lost"
-				/>
-				<GameCard
-					variant="completed"
-					creator="melvinmanni.testnet"
-					startDate="2/10/21 16:00"
-					endDate="2/10/21 16:30"
-					players={32}
-				/>
-				<GameCard
-					variant="completed"
-					creator="melvinmanni.testnet"
-					startDate="2/10/21 16:00"
-					endDate="2/10/21 16:30"
-					players={32}
-					result="lost"
-				/>
+			{games?.map((el) => {
+				if(el) {
+					return (
+						<GameCard
+							key={el.id}
+							id={el.id}
+							creator={el.createdBy}
+							startDate={`${new Date(el.createdAt / 1000000)}`.substring(0, 24)}
+							endDate={`${new Date((el.createdAt / 1000000) + (1800000))}`.substring(0, 24)}
+							players={el.players}
+							contract={contract}
+							currentUser={currentUser}
+							createdAt = {el.createdAt}
+							status={el.status}
+							variant="completed"
+							amount={1.6}
+						/>
+					)
+				}
+
+				return null;
+			})}
 			</main>
 			<Navigator pageNum={1} next={false} prev={false} />
 		</Wrapper>

@@ -31,7 +31,6 @@ const GameCard = ({
   const [endTime, setEndTIme] = useState(0);
   const [result, setResult] = useState("");
 
-
   useEffect(() => {
     const getGameDetails = async () => {
       const playersDetails = await contract?.getPlayersDetails({ gameId: id });
@@ -46,13 +45,9 @@ const GameCard = ({
           if (el.timeRolled !== "0") {
             setRolled("Rolled");
             if (status === 2) {
-              
               if (winners[0] === currentUser?.accountId) {
-                console.log(el.claimedWin);
-
                 setRolled("ClaimWin");
                 setResult("won");
-                console.log(el.claimedWin);
                 if (el.claimedWin === 1) {
                   setResult("claimed");
                   setRolled("claimed");
@@ -124,11 +119,14 @@ const GameCard = ({
         console.log(error.message);
       }
     }
-
+    window.location.reload(false)
     if (status === 2) {
       try {
-        // const
-      } catch (error) {}
+        const data = await contract?.claimWinnings({ gameId: id });
+        console.log(data);
+      } catch (error) {
+        alert("Error occurred: Report out to support@graate.com")
+      }
     }
   };
 
@@ -140,6 +138,7 @@ const GameCard = ({
           variant={
             result === "lost" ? "red" : result === "won" ? "mint" : "disabled"
           }
+          onClick={handleClick}
         >
           {result === "lost"
             ? "Lost"

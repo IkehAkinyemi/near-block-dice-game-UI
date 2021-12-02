@@ -16,12 +16,12 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
         <Route exact path="/" render={(props) => <Home {...props} contract={contract} currentUser={currentUser} />} />
 				<Route exact path="/created-games" render={(props) => <CreatedGames {...props} contract={contract} currentUser={currentUser} />}/>
         <Route exact path="/active-games" render={(props) => <ActiveGames {...props} contract={contract} currentUser={currentUser} />}/>
-        <Route exact path="/completed-games" render={(props) => <CompletedGames {...props} contract={contract} currentUser={currentUser} nearConfig={nearConfig} wallet={wallet} />} />
-        <Route exact path="/profile" component={Profile} />
+        <Route exact path="/completed-games" render={(props) => <CompletedGames {...props} contract={contract} currentUser={currentUser} />} />
+        <Route exact path="/profile" render={(props) => <Profile {...props} contract={contract} currentUser={currentUser} />}/>
         <Route exact path="/game/:id" component={Game} />
       </Switch>
       <Footer />
-    </BrowserRouter>
+    </BrowserRouter> 
   );
 };
 
