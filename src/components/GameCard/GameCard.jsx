@@ -17,7 +17,6 @@ const GameCard = ({
   startDate,
   endDate,
   players,
-  result,
   variant,
   amount,
   contract,
@@ -30,15 +29,39 @@ const GameCard = ({
   const [counter, setCounter] = useState(30.0);
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTIme] = useState(0);
+  const [result, setResult] = useState("");
+
 
   useEffect(() => {
     const getGameDetails = async () => {
-      const playersDetails = await contract.getPlayersDetails({ gameId: id });
+      const playersDetails = await contract?.getPlayersDetails({ gameId: id });
+      let winners = [];
 
-      playersDetails.forEach((el) => {
+      if (status === 2) {
+        winners = await contract?.getWinners({ gameId: id });
+      }
+
+      playersDetails?.forEach((el) => {
         if (el.playerId === currentUser?.accountId) {
           if (el.timeRolled !== "0") {
             setRolled("Rolled");
+            if (status === 2) {
+              
+              if (winners[0] === currentUser?.accountId) {
+                console.log(el.claimedWin);
+
+                setRolled("ClaimWin");
+                setResult("won");
+                console.log(el.claimedWin);
+                if (el.claimedWin === 1) {
+                  setResult("claimed");
+                  setRolled("claimed");
+                }
+              } else {
+                setRolled("lost");
+                setResult("lost");
+              }
+            }
           } else {
             setRolled("Roll");
           }
@@ -49,7 +72,7 @@ const GameCard = ({
     };
 
     getGameDetails();
-  }, [contract, id, currentUser?.accountId]);
+  }, [contract, id, currentUser?.accountId, status]);
 
   useEffect(() => {
     if (status === 1) {
@@ -63,40 +86,49 @@ const GameCard = ({
         setCounter("00:00");
       } else if (Date.now() / 1000 !== endTime) {
         const currentTime = endTime - Date.now() / 1000;
-				console.log(currentTime)
+        console.log(currentTime);
         setCounter(currentTime && currentTime / 60 - 0.01);
       }
     }, 1000);
   }, [status, createdAt, startTime, counter, endTime]);
 
   const handleClick = async () => {
-		setRolled("Loading...")
-    const countDown = () => {
-       setInterval(() => {
-        if (Date.now() / 1000 >= endTime || counter === "00.00") {
-          setCounter("00:00");
-        } else if (Date.now() / 1000 !== endTime) {
-          const currentTime = endTime - Date.now() / 1000;
-          setCounter(currentTime / 60 - 0.01);
-        }
-      }, 1000);
-    };
+    setRolled("Loading...");
 
-    const playersDetails = await contract.getPlayersDetails({ gameId: id });
-    try {
-      playersDetails.forEach(async (el) => {
-        if (el.playerId === currentUser?.accountId) {
-          await contract.rollDice({ gameId: id });
-          setRolled("Rolled");
-          countDown();
-        } else {
-          await contract.joinGame({ gameId: id }, GAS, txFee);
-          setRolled("Roll");
-          countDown();
-        }
-      });
-    } catch (error) {
-      console.log(error.message);
+    if (status !== 2) {
+      const countDown = () => {
+        setInterval(() => {
+          if (Date.now() / 1000 >= endTime || counter === "00.00") {
+            setCounter("00:00");
+          } else if (Date.now() / 1000 !== endTime) {
+            const currentTime = endTime - Date.now() / 1000;
+            setCounter(currentTime / 60 - 0.01);
+          }
+        }, 1000);
+      };
+
+      const playersDetails = await contract.getPlayersDetails({ gameId: id });
+      try {
+        playersDetails.forEach(async (el) => {
+          if (el.playerId === currentUser?.accountId) {
+            await contract.rollDice({ gameId: id });
+            setRolled("Rolled");
+            countDown();
+          } else {
+            await contract.joinGame({ gameId: id }, GAS, txFee);
+            setRolled("Roll");
+            countDown();
+          }
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
+    if (status === 2) {
+      try {
+        // const
+      } catch (error) {}
     }
   };
 
