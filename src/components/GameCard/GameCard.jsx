@@ -60,6 +60,7 @@ const GameCard = ({
           } else {
             setRolled("Roll");
           }
+
           break;
         } else {
           setRolled("Join Game");
@@ -71,9 +72,9 @@ const GameCard = ({
   }, [contract, id, currentUser?.accountId, status]);
 
   useEffect(() => {
-      let time = new Date(createdAt / 1000000);
-      setStartTime(time.getTime() / 1000);
-      setEndTIme(startTime + 1800);
+    let time = new Date(createdAt / 1000000);
+    setStartTime(time.getTime() / 1000);
+    setEndTIme(startTime + 1800);
 
     setInterval(() => {
       if (Date.now() / 1000 >= endTime || counter === "00.00") {
@@ -87,7 +88,7 @@ const GameCard = ({
 
   const handleClick = async () => {
     setRolled("Loading...");
-    
+
     const countDown = () => {
       setInterval(() => {
         if (Date.now() / 1000 >= endTime || counter === "00.00") {
@@ -102,19 +103,20 @@ const GameCard = ({
     if (status !== 2) {
       const playersDetails = await contract.getPlayersDetails({ gameId: id });
       try {
-        console.log(playersDetails)
-          if (playersDetails[0]?.playerId === currentUser?.accountId || playersDetails[1]?.playerId === currentUser?.accountId) {
-            setRolled("Rolling...");
-            const res = await contract.rollDice({ gameId: id });
-            res && setRolled("Rolled");
-            res && countDown();
-          } else {
-            window.alert("hello")
-            setRolled("Joining...");
-            const res = await contract.joinGame({ gameId: id }, GAS, txFee);
-            res && setRolled("Roll");
-            countDown();
-          }
+        if (
+          playersDetails[0]?.playerId === currentUser?.accountId ||
+          playersDetails[1]?.playerId === currentUser?.accountId
+        ) {
+          setRolled("Rolling...");
+          const res = await contract.rollDice({ gameId: id });
+          res && setRolled("Rolled");
+          res && countDown();
+        } else {
+          setRolled("Joining...");
+          const res = await contract.joinGame({ gameId: id }, GAS, txFee);
+          res && setRolled("Roll");
+          countDown();
+        }
       } catch (error) {
         console.log(error.message);
       }
@@ -122,8 +124,8 @@ const GameCard = ({
 
     if (status === 2) {
       try {
-        await contract?.claimWinnings({ gameId: id });
-        window.location.reload(false);
+        const res = await contract?.claimWinnings({ gameId: id });
+        res && window.location.reload(true);
       } catch (error) {
         alert("Error occurred: Report out to support@graate.com");
       }
