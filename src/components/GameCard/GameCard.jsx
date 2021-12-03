@@ -40,7 +40,7 @@ const GameCard = ({
         winners = await contract?.getWinners({ gameId: id });
       }
 
-      playersDetails?.forEach((el) => {
+      for (let el of playersDetails) {
         if (el.playerId === currentUser?.accountId) {
           if (el.timeRolled !== "0") {
             setRolled("Rolled");
@@ -60,28 +60,26 @@ const GameCard = ({
           } else {
             setRolled("Roll");
           }
+          break;
         } else {
           setRolled("Join Game");
         }
-      });
+      }
     };
 
     getGameDetails();
   }, [contract, id, currentUser?.accountId, status]);
 
   useEffect(() => {
-    if (status === 1) {
       let time = new Date(createdAt / 1000000);
       setStartTime(time.getTime() / 1000);
       setEndTIme(startTime + 1800);
-    }
 
     setInterval(() => {
       if (Date.now() / 1000 >= endTime || counter === "00.00") {
         setCounter("00:00");
       } else if (Date.now() / 1000 !== endTime) {
         const currentTime = endTime - Date.now() / 1000;
-        console.log(currentTime);
         setCounter(currentTime && currentTime / 60 - 0.01);
       }
     }, 1000);
@@ -89,43 +87,45 @@ const GameCard = ({
 
   const handleClick = async () => {
     setRolled("Loading...");
+    
+    const countDown = () => {
+      setInterval(() => {
+        if (Date.now() / 1000 >= endTime || counter === "00.00") {
+          setCounter("00:00");
+        } else if (Date.now() / 1000 !== endTime) {
+          const currentTime = endTime - Date.now() / 1000;
+          setCounter(currentTime / 60 - 0.01);
+        }
+      }, 1000);
+    };
 
     if (status !== 2) {
-      const countDown = () => {
-        setInterval(() => {
-          if (Date.now() / 1000 >= endTime || counter === "00.00") {
-            setCounter("00:00");
-          } else if (Date.now() / 1000 !== endTime) {
-            const currentTime = endTime - Date.now() / 1000;
-            setCounter(currentTime / 60 - 0.01);
-          }
-        }, 1000);
-      };
-
       const playersDetails = await contract.getPlayersDetails({ gameId: id });
       try {
-        playersDetails.forEach(async (el) => {
-          if (el.playerId === currentUser?.accountId) {
-            await contract.rollDice({ gameId: id });
-            setRolled("Rolled");
-            countDown();
+        console.log(playersDetails)
+          if (playersDetails[0]?.playerId === currentUser?.accountId || playersDetails[1]?.playerId === currentUser?.accountId) {
+            setRolled("Rolling...");
+            const res = await contract.rollDice({ gameId: id });
+            res && setRolled("Rolled");
+            res && countDown();
           } else {
-            await contract.joinGame({ gameId: id }, GAS, txFee);
-            setRolled("Roll");
+            window.alert("hello")
+            setRolled("Joining...");
+            const res = await contract.joinGame({ gameId: id }, GAS, txFee);
+            res && setRolled("Roll");
             countDown();
           }
-        });
       } catch (error) {
         console.log(error.message);
       }
     }
-    window.location.reload(false)
+
     if (status === 2) {
       try {
-        const data = await contract?.claimWinnings({ gameId: id });
-        console.log(data);
+        await contract?.claimWinnings({ gameId: id });
+        window.location.reload(false);
       } catch (error) {
-        alert("Error occurred: Report out to support@graate.com")
+        alert("Error occurred: Report out to support@graate.com");
       }
     }
   };

@@ -16,7 +16,7 @@ const GAS = Big(3)
 const Home = ({ contract, currentUser }) => {
   const [gameId, setGameId] = useState("");
 	const [homeBtn, setHomeBtn] = useState("Create A Game")
-  console.log(currentUser);
+  const [joinBtn, setJoinBtn] = useState("Join Game")
 
   const createNewGame = async () => {
     try {
@@ -25,6 +25,13 @@ const Home = ({ contract, currentUser }) => {
       console.log(error);
     }
   };
+
+  const handleSubmit = async (e) => {
+    setJoinBtn("Loading...")
+    await contract.joinGame({ gameId: gameId }, GAS, txFee);
+    e.preventDefault();
+    setJoinBtn("Join Game")
+  }
 
   return (
     <Wrapper>
@@ -135,8 +142,8 @@ const Home = ({ contract, currentUser }) => {
               onChange={(e) => setGameId(e.target.value)}
               placeholder="Enter Game ID"
             />
-            <Button style={{ height: 55 }} className="mt-12 w-max">
-              Join Game
+            <Button style={{ height: 55 }} className="mt-12 w-max" onClick={handleSubmit}>
+              {joinBtn}
             </Button>
           </form>
         </article>
