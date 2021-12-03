@@ -42,7 +42,7 @@ const Profile = ({contract, currentUser}) => {
 							currentUser={currentUser}
 							createdAt = {el.createdAt}
 							status={el.status}
-							variant="completed"
+							variant={el.status =! 2 &&	"completed"}
 							amount={1.6}
 						/>
 					)

@@ -124,6 +124,7 @@ const GameCard = ({
 
     if (status === 2) {
       try {
+        setRolled("Claiming...");
         const res = await contract?.claimWinnings({ gameId: id });
         res && window.location.reload(true);
       } catch (error) {
